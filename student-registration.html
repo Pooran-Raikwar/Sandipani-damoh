@@ -42,6 +42,7 @@ body{
     display:flex;
     align-items:center;
     gap:14px;
+    flex-wrap:wrap;
 }
 
 .logo-box{
@@ -53,6 +54,7 @@ body{
     align-items:center;
     justify-content:center;
     font-size:26px;
+    flex-shrink:0;
 }
 
 .school-name{
@@ -66,6 +68,37 @@ body{
     font-size:11px;
     color:#e8f1ff !important;
     letter-spacing:.5px;
+}
+
+/* NAVIGATION */
+
+.nav{
+    width:100%;
+    max-width:1100px;
+    margin:13px auto 0;
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+}
+
+.nav a{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    text-decoration:none !important;
+    color:#ffffff !important;
+    background:rgba(255,255,255,.12);
+    border:1px solid rgba(255,255,255,.25);
+    padding:8px 13px;
+    border-radius:8px;
+    font-size:13px;
+    font-weight:700;
+    transition:.2s;
+}
+
+.nav a:hover{
+    background:#ffffff;
+    color:#0b4fa3 !important;
 }
 
 /* MAIN */
@@ -180,8 +213,7 @@ body{
     color:#d92d20 !important;
 }
 
-/* MOST IMPORTANT:
-   INPUT STYLE COMPLETELY ISOLATED */
+/* INPUT */
 
 .field input,
 .field select{
@@ -256,6 +288,7 @@ body{
 
     cursor:pointer;
     box-shadow:0 5px 15px rgba(23,105,209,.25);
+    transition:.2s;
 }
 
 .submit:hover{
@@ -264,6 +297,7 @@ body{
 
 .submit:disabled{
     opacity:.65 !important;
+    cursor:not-allowed;
 }
 
 /* MESSAGE */
@@ -298,6 +332,51 @@ body{
     background:#edf6ff !important;
     color:#175cd3 !important;
     border:1px solid #b9ddff;
+}
+
+/* SUCCESS ACTIONS */
+
+.success-actions{
+    display:none;
+    margin-top:15px;
+    gap:10px;
+    justify-content:center;
+    flex-wrap:wrap;
+}
+
+.success-actions.show{
+    display:flex;
+}
+
+.action-btn{
+    min-height:44px;
+    padding:10px 16px;
+    border-radius:9px;
+    border:1px solid #1769d1;
+    background:#ffffff;
+    color:#1769d1;
+    font-size:14px;
+    font-weight:800;
+    cursor:pointer;
+    text-decoration:none !important;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    transition:.2s;
+}
+
+.action-btn:hover{
+    background:#1769d1;
+    color:#ffffff !important;
+}
+
+.action-btn.primary{
+    background:#1769d1;
+    color:#ffffff !important;
+}
+
+.action-btn.primary:hover{
+    background:#0e56b4;
 }
 
 /* FOOTER */
@@ -339,6 +418,16 @@ body{
         font-size:9px;
     }
 
+    .nav{
+        margin-top:12px;
+        gap:6px;
+    }
+
+    .nav a{
+        padding:7px 9px;
+        font-size:12px;
+    }
+
     .main{
         padding:15px 9px 30px;
     }
@@ -373,6 +462,14 @@ body{
     .submit{
         width:100%;
     }
+
+    .action-btn{
+        width:100%;
+    }
+
+    .success-actions{
+        flex-direction:column;
+    }
 }
 </style>
 </head>
@@ -383,6 +480,7 @@ body{
 <!-- HEADER -->
 
 <div class="top">
+
     <div class="top-inner">
 
         <div class="logo-box">🎓</div>
@@ -398,6 +496,30 @@ body{
         </div>
 
     </div>
+
+
+    <!-- NAVIGATION -->
+
+    <div class="nav">
+
+        <a href="index.html">
+            🏠 Home
+        </a>
+
+        <a href="vocational.html">
+            💻 Vocational
+        </a>
+
+        <a href="results.html">
+            📊 Results
+        </a>
+
+        <a href="gallery.html">
+            🖼️ Gallery
+        </a>
+
+    </div>
+
 </div>
 
 
@@ -406,6 +528,7 @@ body{
 <div class="main">
 
 <div class="container">
+
 
     <!-- TITLE -->
 
@@ -431,9 +554,12 @@ body{
     <div class="form-card">
 
         <div class="notice">
+
             <strong>महत्वपूर्ण सूचना:</strong>
+
             कृपया सभी जानकारी सही-सही भरें। Submit करने से पहले
             सभी विवरण एक बार अवश्य जाँच लें।
+
         </div>
 
 
@@ -735,10 +861,44 @@ body{
             </div>
 
 
+            <!-- STATUS -->
+
             <div
                 id="registrationStatus"
                 class="message"
             ></div>
+
+
+            <!-- SUCCESS ACTIONS -->
+
+            <div
+                id="successActions"
+                class="success-actions"
+            >
+
+                <button
+                    type="button"
+                    class="action-btn primary"
+                    id="newRegistrationBtn"
+                >
+                    📝 New Registration
+                </button>
+
+                <a
+                    href="index.html"
+                    class="action-btn"
+                >
+                    🏠 Homepage
+                </a>
+
+                <a
+                    href="vocational.html"
+                    class="action-btn"
+                >
+                    💻 Vocational
+                </a>
+
+            </div>
 
 
         </form>
@@ -767,7 +927,7 @@ body{
 </div>
 
 
-<!-- API ONLY -->
+<!-- API -->
 
 <script src="js/api.js"></script>
 
@@ -857,12 +1017,82 @@ function updateClassFields(){
 
 
 /* =====================================
+   SHOW / HIDE SUCCESS ACTIONS
+===================================== */
+
+function showSuccessActions(){
+
+    el("successActions")
+        .classList.add("show");
+
+}
+
+
+function hideSuccessActions(){
+
+    el("successActions")
+        .classList.remove("show");
+
+}
+
+
+/* =====================================
+   RESET FOR NEW REGISTRATION
+===================================== */
+
+function newRegistration(){
+
+    el("studentForm").reset();
+
+    updateClassFields();
+
+    const status =
+        el("registrationStatus");
+
+    status.className = "message";
+
+    status.textContent = "";
+
+    hideSuccessActions();
+
+    el("submitBtn").disabled = false;
+
+    el("submitBtn").textContent =
+        "✓ Submit Registration";
+
+
+    window.scrollTo({
+        top:0,
+        behavior:"smooth"
+    });
+
+
+    setTimeout(function(){
+
+        el("rName").focus();
+
+    },500);
+
+}
+
+
+/* =====================================
    CLASS CHANGE
 ===================================== */
 
 el("rClass").addEventListener(
     "change",
     updateClassFields
+);
+
+
+/* =====================================
+   NEW REGISTRATION BUTTON
+===================================== */
+
+el("newRegistrationBtn").addEventListener(
+    "click",
+    newRegistration
 );
 
 
@@ -885,6 +1115,11 @@ async function(event){
 
     const cls =
         el("rClass").value;
+
+
+    /* Hide old success buttons */
+
+    hideSuccessActions();
 
 
     /* Loading */
@@ -946,7 +1181,9 @@ async function(event){
     };
 
 
-    /* Validation */
+    /* =================================
+       VALIDATION
+    ================================= */
 
     if(
         !data.Name ||
@@ -973,7 +1210,28 @@ async function(event){
     }
 
 
-    /* Mobile */
+    /* Roll number validation */
+
+    if(!/^[0-9]+$/.test(data.Roll)){
+
+        status.className =
+            "message error";
+
+        status.textContent =
+            "⚠️ Roll Number में केवल numbers डालें।";
+
+        button.disabled = false;
+
+        button.textContent =
+            "✓ Submit Registration";
+
+        el("rRoll").focus();
+
+        return;
+    }
+
+
+    /* Mobile validation */
 
     if(
         data.Mobile &&
@@ -990,6 +1248,8 @@ async function(event){
 
         button.textContent =
             "✓ Submit Registration";
+
+        el("rMobile").focus();
 
         return;
     }
@@ -1013,35 +1273,49 @@ async function(event){
         button.textContent =
             "✓ Submit Registration";
 
+        el("rStream").focus();
+
         return;
     }
 
 
-    /* API */
+    /* =================================
+       API
+    ================================= */
 
     try{
 
         const response =
             await apiCall(
                 "registerStudent",
-                {data:data}
+                {
+                    data:data
+                }
             );
 
 
+        /*
+          Correct response handling
+          for current api.js
+        */
+
         if(
             !response ||
-            response.ok === false
+            response.success === false
         ){
 
             throw new Error(
                 response?.message ||
+                response?.error ||
                 "Registration failed."
             );
 
         }
 
 
-        /* SUCCESS */
+        /* =================================
+           SUCCESS
+        ================================= */
 
         status.className =
             "message success";
@@ -1051,9 +1325,17 @@ async function(event){
             "आपकी जानकारी school registration system में save हो गई है।";
 
 
+        /*
+          Form reset only AFTER successful
+          Google Sheet submission
+        */
+
         el("studentForm").reset();
 
         updateClassFields();
+
+
+        showSuccessActions();
 
 
         status.scrollIntoView({
@@ -1061,10 +1343,17 @@ async function(event){
             block:"center"
         });
 
+
     }
 
 
     catch(error){
+
+        /*
+          Important:
+          Error होने पर form reset नहीं होगा.
+          Student की भरी हुई information बनी रहेगी.
+        */
 
         status.className =
             "message error";
@@ -1079,6 +1368,8 @@ async function(event){
     }
 
 
+    /* Restore button */
+
     button.disabled = false;
 
     button.textContent =
@@ -1087,9 +1378,13 @@ async function(event){
 });
 
 
-/* INITIAL */
+/* =====================================
+   INITIAL
+===================================== */
 
 updateClassFields();
+
+hideSuccessActions();
 
 </script>
 
