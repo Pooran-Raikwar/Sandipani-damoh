@@ -1,0 +1,376 @@
+<!doctype html>
+<html lang="hi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Student Registration | Sandipani Digital Campus</title>
+<link rel="stylesheet" href="css/style.css">
+<link rel="icon" href="images/campus-mark.svg">
+
+<style>
+.reg-wrap{max-width:900px;margin:30px auto;padding:0 16px}
+.reg-card{
+  background:#fff;border-radius:18px;padding:25px;
+  box-shadow:0 10px 35px rgba(0,0,0,.10);
+}
+.reg-title{text-align:center;margin-bottom:22px}
+.reg-title h1{margin:5px 0;font-size:30px}
+.reg-title p{margin:5px 0;color:#666}
+.form-grid{
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:16px;
+}
+.field{display:flex;flex-direction:column}
+.field.full{grid-column:1/-1}
+.field label{font-weight:700;margin-bottom:7px}
+.field input,.field select{
+  width:100%;box-sizing:border-box;padding:12px 13px;
+  border:1px solid #d8dce5;border-radius:10px;
+  font-size:15px;background:#fff;
+}
+.field input:focus,.field select:focus{
+  outline:none;border-color:#4568ff;
+  box-shadow:0 0 0 3px rgba(69,104,255,.10)
+}
+.required{color:#d00}
+.section-title{
+  margin:25px 0 15px;padding:11px 14px;
+  border-radius:10px;background:#f4f6fb;
+  font-weight:800;
+}
+.submit-area{text-align:center;margin-top:25px}
+.submit-btn{
+  border:0;border-radius:12px;padding:14px 32px;
+  font-size:17px;font-weight:800;cursor:pointer;
+}
+.status{
+  margin-top:18px;padding:13px;border-radius:10px;
+  display:none;text-align:center;font-weight:700;
+}
+.status.ok{display:block;background:#e8f8ee;color:#16743b}
+.status.error{display:block;background:#fff0f0;color:#b42318}
+.hidden{display:none!important}
+.note{
+  background:#fff8e5;border-left:4px solid #e0a800;
+  padding:12px;border-radius:8px;margin-bottom:20px;
+}
+@media(max-width:700px){
+  .form-grid{grid-template-columns:1fr}
+  .field.full{grid-column:auto}
+  .reg-card{padding:18px}
+  .reg-title h1{font-size:24px}
+}
+</style>
+</head>
+
+<body>
+
+<header class="topbar">
+<div class="container nav">
+<a class="brand" href="index.html">
+<span class="logo">🎓</span>
+<span>Sandipani Digital Campus
+<small>GOVT HIGHER SECONDARY SCHOOL • DAMOH</small>
+</span>
+</a>
+
+<nav class="menu">
+<a href="index.html">Home</a>
+<a href="about.html">About</a>
+<a href="vocational.html">Vocational</a>
+<a href="gallery.html">Gallery</a>
+<a href="results.html">Online Result</a>
+<a href="admin.html">Admin</a>
+</nav>
+</div>
+</header>
+
+<main>
+<div class="reg-wrap">
+
+<div class="reg-card">
+
+<div class="reg-title">
+<div class="kicker">STUDENT REGISTRATION</div>
+<h1>Vocational Student Registration</h1>
+<p>Govt Higher Secondary School Damoh</p>
+</div>
+
+<div class="note">
+<strong>महत्वपूर्ण:</strong>
+सभी विद्यार्थी अपनी जानकारी सही-सही भरें। Submit करने से पहले सभी विवरण जाँच लें।
+</div>
+
+<form id="studentForm">
+
+<div class="section-title">👤 Student Information</div>
+
+<div class="form-grid">
+
+<div class="field">
+<label>Student Name <span class="required">*</span></label>
+<input id="rName" required placeholder="Enter student name">
+</div>
+
+<div class="field">
+<label>Father / Guardian Name <span class="required">*</span></label>
+<input id="rParent" required placeholder="Enter father/guardian name">
+</div>
+
+<div class="field">
+<label>Class <span class="required">*</span></label>
+<select id="rClass" required>
+<option value="">Select Class</option>
+<option value="9th">9th</option>
+<option value="10th">10th</option>
+<option value="11th">11th</option>
+<option value="12th">12th</option>
+</select>
+</div>
+
+<div class="field">
+<label>Section</label>
+<select id="rSection">
+<option value="">Select Section</option>
+<option>A</option>
+<option>B</option>
+<option>C</option>
+<option>D</option>
+</select>
+</div>
+
+<div class="field">
+<label>Roll Number <span class="required">*</span></label>
+<input id="rRoll" required inputmode="numeric" placeholder="Enter roll number">
+</div>
+
+<div class="field">
+<label>Medium <span class="required">*</span></label>
+<select id="rMedium" required>
+<option value="">Select Medium</option>
+<option>Hindi</option>
+<option>English</option>
+</select>
+</div>
+
+<div class="field">
+<label>Mobile Number</label>
+<input id="rMobile" inputmode="numeric" maxlength="10" placeholder="10 digit mobile number">
+</div>
+
+<div class="field">
+<label>Trade <span class="required">*</span></label>
+<select id="rTrade" required>
+<option value="">Select Trade</option>
+<option>IT-ITeS</option>
+</select>
+</div>
+
+<div class="field">
+<label>Job Role <span class="required">*</span></label>
+<select id="rJobRole" required>
+<option value="">Select Job Role</option>
+<option>Web Developer</option>
+<option>Domestic Data Entry Operator</option>
+</select>
+</div>
+
+</div>
+
+<div class="section-title">📚 Subject Information</div>
+
+<div class="form-grid">
+
+<div class="field">
+<label>Skipped Subject</label>
+<select id="rSkipped">
+<option value="None">None</option>
+</select>
+</div>
+
+<div class="field" id="additionalBox">
+<label>Additional Subject</label>
+<select id="rAdditional">
+<option value="None">None</option>
+<option>Hindi</option>
+<option>English</option>
+</select>
+</div>
+
+<div class="field" id="streamBox">
+<label>Stream</label>
+<select id="rStream">
+<option value="">Select Stream</option>
+<option>Science</option>
+<option>Commerce</option>
+<option>Arts</option>
+</select>
+</div>
+
+</div>
+
+<div class="submit-area">
+<button type="submit" class="submit-btn btn primary">
+Submit Registration
+</button>
+</div>
+
+<div id="registrationStatus" class="status"></div>
+
+</form>
+
+</div>
+</div>
+</main>
+
+<footer>
+<div class="container">
+<strong>Govt Sandipani HSS School Damoh</strong><br>
+<span>Vocational Education • IT–ITeS • Digital Campus</span>
+</div>
+</footer>
+
+<script src="js/api.js"></script>
+
+<script>
+
+const $ = id => document.getElementById(id);
+
+function updateClassFields(){
+
+  const cls = $("rClass").value;
+  const skipped = $("rSkipped");
+  const additionalBox = $("additionalBox");
+  const streamBox = $("streamBox");
+
+  skipped.innerHTML = "";
+
+  const none = document.createElement("option");
+  none.value = "None";
+  none.textContent = "None";
+  skipped.appendChild(none);
+
+  if(cls === "9th" || cls === "10th"){
+
+    ["Sanskrit","English","Other"].forEach(x=>{
+      const o=document.createElement("option");
+      o.value=x;
+      o.textContent=x;
+      skipped.appendChild(o);
+    });
+
+    additionalBox.classList.add("hidden");
+    streamBox.classList.add("hidden");
+
+    $("rAdditional").value="None";
+    $("rStream").value="";
+
+  }else if(cls === "11th" || cls === "12th"){
+
+    ["Hindi","English","Other"].forEach(x=>{
+      const o=document.createElement("option");
+      o.value=x;
+      o.textContent=x;
+      skipped.appendChild(o);
+    });
+
+    additionalBox.classList.remove("hidden");
+    streamBox.classList.remove("hidden");
+
+  }else{
+
+    additionalBox.classList.add("hidden");
+    streamBox.classList.add("hidden");
+
+  }
+}
+
+$("rClass").addEventListener("change",updateClassFields);
+
+$("studentForm").addEventListener("submit",async function(e){
+
+  e.preventDefault();
+
+  const status=$("registrationStatus");
+
+  status.className="status";
+  status.textContent="Registration submit हो रहा है...";
+  status.style.display="block";
+
+  const cls=$("rClass").value;
+
+  const data={
+    Name:$("rName").value.trim(),
+    Parent:$("rParent").value.trim(),
+    Class:cls,
+    Section:$("rSection").value,
+    Roll:$("rRoll").value.trim(),
+    Medium:$("rMedium").value,
+    Mobile:$("rMobile").value.trim(),
+    Trade:$("rTrade").value,
+    "Job Role":$("rJobRole").value,
+    "Skipped Subject":$("rSkipped").value,
+    "Additional Subject":
+      (cls==="11th" || cls==="12th")
+      ? $("rAdditional").value
+      : "",
+    Stream:
+      (cls==="11th" || cls==="12th")
+      ? $("rStream").value
+      : ""
+  };
+
+  if(!data.Name || !data.Parent || !data.Class ||
+     !data.Roll || !data.Medium || !data.Trade ||
+     !data["Job Role"]){
+
+    status.className="status error";
+    status.textContent="कृपया सभी जरूरी (*) जानकारी भरें।";
+    return;
+  }
+
+  if(data.Mobile && !/^[0-9]{10}$/.test(data.Mobile)){
+    status.className="status error";
+    status.textContent="Mobile number 10 digits का होना चाहिए।";
+    return;
+  }
+
+  if((cls==="11th" || cls==="12th") && !data.Stream){
+    status.className="status error";
+    status.textContent="11th/12th के लिए Stream select करें।";
+    return;
+  }
+
+  try{
+
+    const r=await apiCall("registerStudent",{data:data});
+
+    if(!r || r.ok===false){
+      throw new Error(r?.message || "Registration failed.");
+    }
+
+    status.className="status ok";
+    status.textContent=
+      "✅ Registration successfully submit हो गया।";
+
+    $("studentForm").reset();
+    updateClassFields();
+
+    window.scrollTo({top:0,behavior:"smooth"});
+
+  }catch(err){
+
+    status.className="status error";
+    status.textContent=
+      "❌ "+(err.message || "Registration submit नहीं हो सका।");
+
+  }
+
+});
+
+updateClassFields();
+
+</script>
+
+</body>
+</html>
