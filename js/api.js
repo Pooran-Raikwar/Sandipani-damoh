@@ -1,4 +1,38 @@
-const SAVED_API_URL=localStorage.getItem('sandipani_api_url')||'';
-const API_URL=(SAVED_API_URL||DEFAULT_API_URL||'').replace(/\/$/,'');
-function setApiUrl(v){localStorage.setItem('sandipani_api_url',v.trim().replace(/\/$/,''));}
-function apiCall(action,params={}){return new Promise((resolve,reject)=>{if(!API_URL||API_URL.includes('PASTE_YOUR')){reject(new Error('Google Apps Script URL is not configured. Open Admin → Setup and save the /exec URL.'));return;}const cb='sandipani_cb_'+Date.now()+'_'+Math.floor(Math.random()*100000);const s=document.createElement('script');const timer=setTimeout(()=>{cleanup();reject(new Error('Request timed out. Check Apps Script deployment and access settings.'));},25000);function cleanup(){clearTimeout(timer);delete window[cb];s.remove();}window[cb]=r=>{cleanup();if(!r||r.success===false){reject(new Error(r?.error||'Server error.'));return;}resolve(r.data!==undefined?r.data:r);};s.onerror=()=>{cleanup();reject(new Error('Could not connect to Google Apps Script.'));};const q=new URLSearchParams({api:'1',action,callback:cb});if(Object.keys(params).length)q.set('params',JSON.stringify(params));Object.entries(params).forEach(([k,v])=>{if(k!=='params'&&typeof v!=='object')q.set(k,v)});s.src=API_URL+'?'+q.toString();document.body.appendChild(s);});}
+/* Sandipani API client - GitHub Pages -> Google Apps Script */
+const API = (() => {
+  const url = (typeof CONFIG !== "undefined" && CONFIG.API_URL) ? CONFIG.API_URL : "";
+  if (!url) console.warn("Sandipani: CONFIG.API_URL is not configured.");
+
+  async function call(action, data = {}) {
+    if (!url) throw new Error("Google Apps Script URL is not configured.");
+    const payload = { action, ...data };
+    const res = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify(payload)
+    });
+    const text = await res.text();
+    let out;
+    try { out = JSON.parse(text); }
+    catch (_) { throw new Error("Invalid response from Google Apps Script."); }
+    if (out && out.ok === false) throw new Error(out.error || "Request failed.");
+    return out && Object.prototype.hasOwnProperty.call(out, "data") ? out.data : out;
+  }
+
+  return {
+    call,
+    verifyAdmin: pin => call("verifyAdmin", { pin }),
+    getStats: pin => call("getStats", { pin }),
+    getSettings: () => call("getSettings"),
+    registerStudent: data => call("registerStudent", { data }),
+    getStudents: (pin, filters) => call("getStudents", { pin, filters }),
+    updateStudent: (pin, row, data) => call("updateStudent", { pin, row, data }),
+    softDeleteStudent: (pin, row) => call("softDeleteStudent", { pin, row }),
+    getDeleted: pin => call("getDeleted", { pin }),
+    restoreDeleted: (pin, row) => call("restoreDeleted", { pin, row }),
+    saveSettings: (pin, settings) => call("saveSettings", { pin, settings }),
+    getResult: (roll, medium, Class) => call("getResult", { roll, medium, Class }),
+    getMarks: (pin, studentRow) => call("getMarks", { pin, studentRow }),
+    saveMarks: (pin, studentRow, marks) => call("saveMarks", { pin, studentRow, marks })
+  };
+})();
