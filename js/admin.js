@@ -1,85 +1,52 @@
+let adminPin="",studentsCache=[],currentSettings=[],isLoggedIn=false;
+const FIELDS=[["Name","Student Name"],["Parent","Father / Guardian"],["Class","Class"],["Section","Section"],["Roll","Roll Number"],["Medium","Medium"],["Mobile","Mobile"],["Trade","Trade"],["Job Role","Job Role"],["Stream","Stream"],["Skipped Subject","Skipped Subject"],["Additional Subject","Additional Subject"],["Status","Status"]];
 
-let adminPin="", studentsCache=[], currentSettings=[];
-function adminMsg(t,type=""){msg("adminMsg",t,type)}
-async function adminLogin(){
-  const p=document.getElementById("adminPin").value.trim();
-  if(!p)return adminMsg("PIN required.","error");
-  try{
-    const r=await apiCall("verifyAdmin",{pin:p});
-    if(!r.valid)return adminMsg("Invalid Admin PIN.","error");
-    adminPin=p; document.getElementById("loginCard").classList.add("hidden"); document.getElementById("adminPanel").classList.remove("hidden");
-    await loadStats(); await loadStudents(); await loadSettings();
-    adminMsg("Admin login successful.","ok");
-  }catch(e){adminMsg(e.message,"error")}
-}
-async function loadStats(){
-  const r=await apiCall("stats",{pin:adminPin});
-  document.getElementById("statStudents").textContent=r.result.students;
-  document.getElementById("statMarks").textContent=r.result.marks;
-}
-async function loadStudents(){
-  try{
-    const filters={search:document.getElementById("studentSearch")?.value||""};
-    const r=await apiCall("students",{pin:adminPin,filters}); studentsCache=r.result||[];
-    const tbody=document.getElementById("studentRows");
-    if(!tbody)return;
-    tbody.innerHTML=studentsCache.map(s=>`<tr>
-      <td>${esc(s.Name)}</td><td>${esc(s.Class)}</td><td>${esc(s.Section)}</td><td>${esc(s.Roll)}</td><td>${esc(s.Medium)}</td><td>${esc(s.Trade)}</td>
-      <td><div class="admin-actions"><button class="mini blue" onclick="editStudent(${s._row})">Edit</button><button class="mini red" onclick="deleteStudent(${s._row})">Delete</button></div></td>
-    </tr>`).join("")||"<tr><td colspan='7'>No students found.</td></tr>";
-  }catch(e){adminMsg(e.message,"error")}
-}
-function editStudent(row){
-  const s=studentsCache.find(x=>Number(x._row)===Number(row)); if(!s)return;
-  const data={}; ["Name","Parent","Class","Section","Roll","Medium","Mobile","Trade","Job Role","Stream","Status"].forEach(k=>data[k]=prompt(k,s[k]??"")??s[k]??"");
-  updateStudent(row,data);
-}
-async function updateStudent(row,data){
-  try{await apiCall("updateStudent",{pin:adminPin,row,data});adminMsg("Student updated.","ok");await loadStats();await loadStudents();}catch(e){adminMsg(e.message,"error")}
-}
-async function deleteStudent(row){
-  if(!confirm("Delete this student and linked marks?"))return;
-  try{await apiCall("deleteStudent",{pin:adminPin,row});adminMsg("Student deleted and moved to Deleted Records.","ok");await loadStats();await loadStudents();}catch(e){adminMsg(e.message,"error")}
-}
-async function saveMarksForm(){
-  try{
-    const data={Class:v("mClass"),Roll:v("mRoll"),Subject:v("mSubject"),Theory:v("mTheory"),Practical:v("mPractical")};
-    await apiCall("saveMarks",{pin:adminPin,data}); adminMsg("Marks saved successfully.","ok");await loadStats();
-  }catch(e){adminMsg(e.message,"error")}
-}
-async function loadDeleted(){
-  try{
-    const r=await apiCall("deleted",{pin:adminPin});const body=document.getElementById("deletedRows");
-    body.innerHTML=(r.result||[]).map(x=>`<tr><td>${esc(x.deletedAt)}</td><td>${esc(x.type)}</td><td><button class="mini green" onclick="restore(${x.row})">Restore</button></td></tr>`).join("")||"<tr><td colspan='3'>No deleted records.</td></tr>";
-  }catch(e){adminMsg(e.message,"error")}
-}
-async function restore(row){
-  try{await apiCall("restore",{pin:adminPin,row});adminMsg("Record restored.","ok");await loadStats();await loadStudents();await loadDeleted();}catch(e){adminMsg(e.message,"error")}
-}
-async function loadSettings(){
-  try{
-    const r=await apiCall("settings");currentSettings=r.settings||[];renderSettings();
-  }catch(e){adminMsg(e.message,"error")}
-}
-function renderSettings(){
-  const box=document.getElementById("settingsBox"); if(!box)return;
-  box.innerHTML=currentSettings.map((s,i)=>`<div class="setting-row" data-i="${i}">
-    <input value="${escAttr(s.field)}" class="sf">
-    <select class="st"><option ${s.type==="text"?"selected":""}>text</option><option ${s.type==="dropdown"?"selected":""}>dropdown</option></select>
-    <input value="${escAttr(s.options)}" class="so" placeholder="Option1|Option2">
-    <select class="sr"><option ${s.required?"selected":""}>Yes</option><option ${!s.required?"selected":""}>No</option></select>
-    <select class="se"><option ${s.enabled?"selected":""}>Yes</option><option ${!s.enabled?"selected":""}>No</option></select>
-    <input value="${escAttr(s.onlyClasses)}" class="sc" placeholder="All or 9th|10th">
-  </div>`).join("");
-}
-async function saveSettingsForm(){
-  try{
-    const arr=[...document.querySelectorAll(".setting-row")].map(r=>({
-      field:r.querySelector(".sf").value,type:r.querySelector(".st").value,options:r.querySelector(".so").value,
-      required:r.querySelector(".sr").value==="Yes",enabled:r.querySelector(".se").value==="Yes",onlyClasses:r.querySelector(".sc").value||"All"
-    }));
-    await apiCall("saveSettings",{pin:adminPin,settings:arr});adminMsg("Form settings saved.","ok");await loadSettings();
-  }catch(e){adminMsg(e.message,"error")}
-}
-function addSetting(){currentSettings.push({field:"New Field",type:"text",options:"",required:false,enabled:true,onlyClasses:"All"});renderSettings();}
+function msgAdmin(t,type=""){const b=document.getElementById("adminMsg")||document.getElementById("dashboardMsg");if(b){b.textContent=t;b.className="message "+type;}}
 function v(id){return document.getElementById(id)?.value||""}
+function esc(x){return String(x??"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;")}
+function setShow(id,yes){const e=document.getElementById(id);if(e){e.classList.toggle("hidden",!yes);e.style.display=yes?"":"none"}}
+function lockAdmin(){isLoggedIn=false;adminPin="";setShow("loginCard",true);setShow("adminPanel",false)}
+function unlockAdmin(){isLoggedIn=true;setShow("loginCard",false);setShow("adminPanel",true)}
+
+async function adminLogin(){
+ const input=document.getElementById("adminPin"),p=(input?.value||"").trim(),btn=document.getElementById("loginButton");
+ if(!p){msgAdmin("PIN required.","error");return}
+ if(btn){btn.disabled=true;btn.textContent="Checking..."}
+ try{
+  const r=await apiCall("verifyAdmin",{pin:p}); console.log("verifyAdmin:",r);
+  const valid=r?.valid===true||r?.result?.valid===true||r?.data?.valid===true||r?.result===true||r===true;
+  if(!valid){msgAdmin("❌ Invalid Admin PIN.","error");input?.focus();return}
+  adminPin=p;unlockAdmin();msgAdmin("✅ Admin login successful.","ok");
+  await loadStats();await loadStudents();await loadSettings();
+ }catch(e){console.error(e);msgAdmin(e.message||"Admin login failed.","error")}
+ finally{if(btn){btn.disabled=false;btn.textContent="🔓 Login"}}
+}
+function adminLogout(){if(!confirm("Are you sure you want to logout?"))return;adminPin="";isLoggedIn=false;studentsCache=[];currentSettings=[];document.getElementById("adminPin").value="";lockAdmin();msgAdmin("You have been logged out.","ok");window.scrollTo({top:0,behavior:"smooth"})}
+
+async function loadStats(){if(!isLoggedIn)return;const r=await apiCall("stats",{pin:adminPin}),x=r?.result??r??{};document.getElementById("statStudents").textContent=x.students??0;document.getElementById("statMarks").textContent=x.marks??0}
+
+function filters(){return{search:v("studentSearch"),cls:v("studentClassFilter"),section:v("studentSectionFilter"),medium:v("studentMediumFilter"),trade:v("studentTradeFilter"),job:v("studentJobFilter")}}
+function filtered(){const f=filters();return studentsCache.filter(s=>{const q=f.search.trim().toLowerCase();if(q&&!([s.Name,s.Parent,s.Roll,s.Class,s.Section,s.Medium,s.Mobile,s.Trade,s["Job Role"],s.Stream,s["Skipped Subject"],s["Additional Subject"],s.Status].join(" ").toLowerCase().includes(q)))return false;if(f.cls&&String(s.Class||"")!==f.cls)return false;if(f.section&&String(s.Section||"")!==f.section)return false;if(f.medium&&String(s.Medium||"")!==f.medium)return false;if(f.trade&&String(s.Trade||"")!==f.trade)return false;if(f.job&&String(s["Job Role"]||"")!==f.job)return false;return true})}
+
+async function loadStudents(){if(!isLoggedIn)return;try{const r=await apiCall("students",{pin:adminPin,filters:{search:""}});studentsCache=Array.isArray(r?.result)?r.result:Array.isArray(r)?r:[];fillFilterOptions();renderStudents()}catch(e){msgAdmin(e.message,"error")}}
+function fillFilterOptions(){const t=document.getElementById("studentTradeFilter"),j=document.getElementById("studentJobFilter");if(!t||!j)return;const tv=t.value,jv=j.value;const ts=[...new Set(studentsCache.map(x=>x.Trade).filter(Boolean))].sort(),js=[...new Set(studentsCache.map(x=>x["Job Role"]).filter(Boolean))].sort();t.innerHTML='<option value="">All Trades</option>'+ts.map(x=>`<option value="${esc(x)}">${esc(x)}</option>`).join("");j.innerHTML='<option value="">All Job Roles</option>'+js.map(x=>`<option value="${esc(x)}">${esc(x)}</option>`).join("");if(ts.includes(tv))t.value=tv;if(js.includes(jv))j.value=jv}
+function renderStudents(list=filtered()){const body=document.getElementById("studentRows");if(!body)return;body.innerHTML=list.map(s=>`<tr><td class="select-col"><input class="student-check" type="checkbox" value="${Number(s._row)}"></td><td>${esc(s.Name)}</td><td>${esc(s.Class)}</td><td>${esc(s.Section)}</td><td>${esc(s.Roll)}</td><td>${esc(s.Medium)}</td><td>${esc(s.Trade)}</td><td><button class="mini blue" onclick="editStudent(${Number(s._row)})">Edit</button> <button class="mini red" onclick="deleteStudent(${Number(s._row)})">Delete</button></td></tr>`).join("")||'<tr><td colspan="8">No students found.</td></tr>';document.getElementById("filterCount").textContent=`Showing ${list.length} of ${studentsCache.length} students`}
+function selectAllStudents(){document.querySelectorAll("#studentRows .student-check").forEach(x=>x.checked=true)}
+function clearStudentSelection(){document.querySelectorAll("#studentRows .student-check").forEach(x=>x.checked=false)}
+function chosen(){const ids=[...document.querySelectorAll("#studentRows .student-check:checked")].map(x=>String(x.value));return studentsCache.filter(s=>ids.includes(String(s._row)))}
+function printFields(){const a=[...document.querySelectorAll(".print-field:checked")].map(x=>x.value);return a.length?a:FIELDS.slice(0,6).map(x=>x[0])}
+function printFilteredStudents(){const s=filtered();if(!s.length)return alert("Print करने के लिए कोई student नहीं मिला.");printStudents(s,printFields())}
+function printSelectedStudents(){const s=chosen();if(!s.length)return alert("पहले कम से कम एक student select करें.");printStudents(s,printFields())}
+function printStudents(students,fields){const labels=Object.fromEntries(FIELDS),w=window.open("","_blank");if(!w)return alert("Browser में pop-up allow करें.");const rows=students.map(s=>`<tr>${fields.map(f=>`<td>${esc(s[f]??"")}</td>`).join("")}</tr>`).join("");w.document.write(`<!doctype html><html><head><meta charset="UTF-8"><title>Student List</title><style>body{font-family:Arial;margin:15px}h1{text-align:center;font-size:21px}p{text-align:center;font-size:12px}table{width:100%;border-collapse:collapse}th,td{border:1px solid #888;padding:6px;font-size:11px}th{background:#eef4ff}@media print{body{margin:8mm}}</style></head><body><h1>Govt Higher Secondary School Damoh</h1><p>Sandipani Digital Campus • IT–ITeS • Student List</p><p>Total Students: ${students.length} | Date: ${new Date().toLocaleDateString("en-IN")}</p><table><thead><tr>${fields.map(f=>`<th>${esc(labels[f]||f)}</th>`).join("")}</tr></thead><tbody>${rows}</tbody></table><script>onload=()=>setTimeout(()=>print(),400)<\/script></body></html>`);w.document.close()}
+
+async function editStudent(row){const s=studentsCache.find(x=>Number(x._row)===Number(row));if(!s)return;const d={};["Name","Parent","Class","Section","Roll","Medium","Mobile","Trade","Job Role","Stream","Status"].forEach(k=>d[k]=prompt(k,s[k]??"")??s[k]??"");try{await apiCall("updateStudent",{pin:adminPin,row,data:d});msgAdmin("✅ Student updated.","ok");await loadStudents()}catch(e){msgAdmin(e.message,"error")}}
+async function deleteStudent(row){if(!confirm("Delete this student and linked marks?"))return;try{await apiCall("deleteStudent",{pin:adminPin,row});msgAdmin("✅ Student deleted.","ok");await loadStats();await loadStudents()}catch(e){msgAdmin(e.message,"error")}}
+async function saveMarksForm(){try{await apiCall("saveMarks",{pin:adminPin,data:{Class:v("mClass"),Roll:v("mRoll"),Subject:v("mSubject"),Theory:v("mTheory"),Practical:v("mPractical")}});msgAdmin("✅ Marks saved successfully.","ok");await loadStats()}catch(e){msgAdmin(e.message,"error")}}
+async function loadDeleted(){if(!isLoggedIn)return;try{const r=await apiCall("deleted",{pin:adminPin}),a=Array.isArray(r?.result)?r.result:[],b=document.getElementById("deletedRows");b.innerHTML=a.map(x=>`<tr><td>${esc(x.deletedAt)}</td><td>${esc(x.type)}</td><td><button class="mini green" onclick="restore(${Number(x.row)})">Restore</button></td></tr>`).join("")||'<tr><td colspan="3">No deleted records.</td></tr>'}catch(e){msgAdmin(e.message,"error")}}
+async function restore(row){try{await apiCall("restore",{pin:adminPin,row});msgAdmin("✅ Record restored.","ok");await loadStats();await loadStudents();await loadDeleted()}catch(e){msgAdmin(e.message,"error")}}
+async function loadSettings(){try{const r=await apiCall("settings",{pin:adminPin});currentSettings=Array.isArray(r?.settings)?r.settings:Array.isArray(r?.result)?r.result:[];renderSettings()}catch(e){msgAdmin(e.message,"error")}}
+function renderSettings(){const b=document.getElementById("settingsBox");if(!b)return;b.innerHTML=currentSettings.map((s,i)=>`<div class="setting-row" data-i="${i}"><input value="${esc(s.field)}" class="sf"><select class="st"><option ${s.type==="text"?"selected":""}>text</option><option ${s.type==="dropdown"?"selected":""}>dropdown</option></select><input value="${esc(s.options)}" class="so" placeholder="Option1|Option2"><select class="sr"><option ${s.required?"selected":""}>Yes</option><option ${!s.required?"selected":""}>No</option></select><select class="se"><option ${s.enabled?"selected":""}>Yes</option><option ${!s.enabled?"selected":""}>No</option></select><input value="${esc(s.onlyClasses)}" class="sc" placeholder="All or 9th|10th"></div>`).join("")}
+async function saveSettingsForm(){try{const a=[...document.querySelectorAll(".setting-row")].map(r=>({field:r.querySelector(".sf").value,type:r.querySelector(".st").value,options:r.querySelector(".so").value,required:r.querySelector(".sr").value==="Yes",enabled:r.querySelector(".se").value==="Yes",onlyClasses:r.querySelector(".sc").value||"All"}));await apiCall("saveSettings",{pin:adminPin,settings:a});msgAdmin("✅ Form settings saved.","ok");await loadSettings()}catch(e){msgAdmin(e.message,"error")}}
+function addSetting(){currentSettings.push({field:"New Field",type:"text",options:"",required:false,enabled:true,onlyClasses:"All"});renderSettings()}
+
+document.addEventListener("DOMContentLoaded",()=>{lockAdmin();const p=document.getElementById("adminPin");p?.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();adminLogin()}});["studentSearch","studentClassFilter","studentSectionFilter","studentMediumFilter","studentTradeFilter","studentJobFilter"].forEach(id=>{const e=document.getElementById(id);e?.addEventListener("input",()=>renderStudents());e?.addEventListener("change",()=>renderStudents())})});
