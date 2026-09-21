@@ -16,7 +16,7 @@ const API = (() => {
     getStudents:(pin,filters)=>call('students',{pin,filters}), updateStudent:(pin,row,data)=>call('updateStudent',{pin,row,data}),
     deleteStudent:(pin,row)=>call('deleteStudent',{pin,row}), getDeleted:pin=>call('deleted',{pin}),
     restoreDeleted:(pin,row)=>call('restore',{pin,row}), saveSettings:(pin,settings)=>call('saveSettings',{pin,settings}),
-    saveConfig:(pin,config)=>call('saveConfig',{pin,config}), getResult:(roll,medium,Class)=>call('result',{roll,medium,Class})
+    saveConfig:(pin,config)=>call('saveConfig',{pin,config}), getResult:(roll,medium,Class)=>call('result',{roll,medium,class:Class}), saveMarks:(pin,data)=>call('saveMarks',{pin,data}), getMarks:(pin,studentRow)=>call('getMarks',{pin,studentRow}), getResult:(roll,medium,Class)=>call('result',{roll,medium,Class})
   };
 })();
 function apiCall(action,data){return API.call(action,data);}
