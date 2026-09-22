@@ -14,17 +14,17 @@
 .about-page .word-art span:nth-of-type(1){color:#7357ff}.about-page .word-art span:nth-of-type(2){color:#13bfcf}.about-page .word-art span:nth-of-type(3){color:#f47e3a}.about-page .word-art b{font-size:18px;color:#c6c7d3}
 
 /* ---------- PROFESSIONAL PROFILE CARD ---------- */
-.about-page .profile-stage{position:relative;display:flex;justify-content:center;align-items:center;min-height:500px;padding:18px 15px}
+.about-page .profile-stage{position:relative;display:flex;justify-content:center;align-items:center;min-height:500px;padding:18px 15px 48px}
 .about-page .profile-frame{width:min(370px,100%);padding:12px;background:#fff;border:1px solid #e7e7ef;border-radius:26px;box-shadow:0 24px 65px rgba(36,30,83,.14);position:relative;z-index:2;transform:none}
 .about-page .profile-card-top{display:flex;justify-content:space-between;align-items:center;padding:5px 7px 11px;color:#7a7890;font-size:9px;font-weight:900;letter-spacing:.14em}
 .about-page .profile-photo-wrap{height:auto;aspect-ratio:4/4.55;border-radius:18px;overflow:hidden;background:linear-gradient(145deg,#17182c,#6954e8);position:relative}
 .about-page .profile-photo-wrap img{width:100%;height:100%;object-fit:cover;object-position:center top;display:block}
 .about-page .photo-fallback{width:100%;height:100%;place-items:center;font-size:85px;font-weight:1000;color:white;background:linear-gradient(135deg,#7957ff,#18cbd7);display:grid}
 .about-page .photo-edit{position:absolute;right:12px;bottom:12px;left:auto;padding:9px 12px;border-radius:10px;background:rgba(10,12,25,.80);color:#fff;font-size:11px;font-weight:800;cursor:pointer;backdrop-filter:blur(10px)}
-.about-page .profile-name{padding:15px 6px 8px}.about-page .profile-name small{font-size:8px;letter-spacing:.16em;font-weight:900;color:#7a7890}.about-page .profile-name h2{font-size:27px;line-height:1.15;margin:5px 0 4px;letter-spacing:-.025em}.about-page .profile-name p{margin:0;color:#777b8e;font-size:12px;line-height:1.5}
-.about-page .profile-card-bottom{display:flex;gap:6px;flex-wrap:wrap;padding:8px 6px 4px;border-top:1px solid #ececf2}.about-page .profile-card-bottom span{font-size:8px;font-weight:900;letter-spacing:.06em;color:#5f6376;background:#f6f6fb;border-radius:7px;padding:6px 7px}
+.about-page .profile-name{padding:15px 8px 9px;position:relative;z-index:6;background:#fff}.about-page .profile-name small{display:block;font-size:8px;line-height:1.35;letter-spacing:.16em;font-weight:900;color:#7a7890;margin-bottom:5px}.about-page .profile-name h2{font-size:29px;line-height:1.15;margin:0 0 6px;letter-spacing:-.025em;color:#101322;position:relative;z-index:7;white-space:nowrap}.about-page .profile-name p{margin:0;color:#777b8e;font-size:12px;line-height:1.5}
+.about-page .profile-card-bottom{display:flex;gap:7px 7px;flex-wrap:wrap;padding:10px 6px 4px;border-top:1px solid #ececf2}.about-page .profile-card-bottom span{font-size:8px;font-weight:900;letter-spacing:.06em;line-height:1.2;color:#5f6376;background:#f6f6fb;border-radius:7px;padding:6px 8px;white-space:nowrap}
 .about-page .floating-chip{position:absolute;z-index:4;padding:10px 13px;border-radius:12px;background:#fff;box-shadow:0 14px 32px rgba(38,30,82,.13);font-weight:900;font-size:11px}
-.about-page .chip-one{top:45px;left:2%;color:#6f51ed;transform:rotate(-5deg)}.about-page .chip-two{right:-2%;bottom:105px;color:#0eaebd;transform:rotate(5deg)}.about-page .chip-three{left:3%;bottom:42px;color:#e66f31;transform:rotate(-4deg)}
+.about-page .chip-one{top:45px;left:2%;color:#6f51ed;transform:rotate(-5deg)}.about-page .chip-two{right:-2%;bottom:105px;color:#0eaebd;transform:rotate(5deg)}.about-page .chip-three{left:auto;right:2%;bottom:4px;color:#e66f31;transform:rotate(-4deg)}
 .about-page .hero-orbit{position:absolute;border:1px solid rgba(121,87,255,.11);border-radius:50%;pointer-events:none}.about-page .orbit-a{width:480px;height:480px;right:-240px;top:-190px}.about-page .orbit-b{width:280px;height:280px;left:-160px;bottom:-160px}
 
 /* ---------- EXPERIENCE STRIP ---------- */
@@ -63,7 +63,7 @@
   .about-page .hero-copy{margin:auto}
   .about-page .hero-text{margin-left:auto;margin-right:auto}
   .about-page .word-art{justify-content:center}
-  .about-page .profile-stage{min-height:0;padding:8px 0 20px}
+  .about-page .profile-stage{min-height:0;padding:8px 0 55px}
   .about-page .profile-frame{width:min(350px,94vw)}
   .about-page .floating-chip{display:none}
   .about-page .two-col,.about-page .edu-head,.about-page .closing{grid-template-columns:1fr;gap:32px}
@@ -86,8 +86,8 @@
   .about-page .profile-frame{width:min(320px,92vw);padding:9px;border-radius:21px}
   .about-page .profile-card-top{padding:4px 6px 8px;font-size:8px}
   .about-page .profile-photo-wrap{border-radius:15px;aspect-ratio:4/4.45}
-  .about-page .profile-name{padding:12px 5px 7px}.about-page .profile-name h2{font-size:24px}.about-page .profile-name p{font-size:11px}
-  .about-page .profile-card-bottom{padding:7px 5px 3px}.about-page .profile-card-bottom span{font-size:7px;padding:5px 6px}
+  .about-page .profile-name{padding:12px 6px 8px}.about-page .profile-name h2{font-size:24px;line-height:1.18}.about-page .profile-name p{font-size:11px}
+  .about-page .profile-card-bottom{padding:8px 5px 3px;gap:6px}.about-page .profile-card-bottom span{font-size:7px;padding:5px 7px;line-height:1.2}
   .about-page .photo-edit{right:9px;bottom:9px;padding:8px 10px;font-size:10px}
   .about-page .experience-strip{margin:0 12px;border-radius:16px}
   .about-page .experience-strip div{padding:17px 12px;gap:10px}.about-page .experience-strip strong{font-size:20px}.about-page .experience-strip span{font-size:10px}
