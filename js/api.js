@@ -42,10 +42,18 @@ const API = (() => {
 
     uploadGallery:(pin,data)=>{
       const d = data || {};
+      const sectionMap = {
+        guest:'Guest Lectures Photos',
+        industrial:'Industrial Visit Photos',
+        classroom:'Class Room Teaching',
+        activities:'Student Activities'
+      };
+      const rawSection = d.section || d.category || '';
+      const section = sectionMap[rawSection] || rawSection;
       return call('galleryUpload',{
         pin,
         data:{
-          category:d.section || d.category,
+          section,
           title:d.title || '',
           mimeType:d.mimeType || 'image/jpeg',
           base64:d.base64 || ''
