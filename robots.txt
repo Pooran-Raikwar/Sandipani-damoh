@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+Disallow: /admin.html
+Disallow: /marks-entry.html
+Disallow: /gallery-manager.html
+
+Sitemap: https://pooran-raikwar.github.io/Sandipani-damoh/sitemap.xml
